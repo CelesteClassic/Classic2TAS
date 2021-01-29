@@ -650,9 +650,9 @@ function api.peek(addr)
 			return bit.band(pico8.camera_x,0xff)
 		elseif addr==0x5f29 then 
 			return bit.rshift(bit.band(pico8.camera_x,0xff00),8)
-		elseif addr==0x5f30 then 
+		elseif addr==0x5f2a then 
 			return bit.band(pico8.camera_y,0xff)
-		elseif addr==0x5f31 then 
+		elseif addr==0x5f2b then 
 			return bit.rshift(bit.band(pico8.camera_y,0xff00),8)
 		end
 	elseif addr<0x5fc0 then
@@ -1138,6 +1138,7 @@ end
 
 api.sub=string.sub
 api.pairs=pairs
+api.ipairs=ipairs
 api.type=type
 api.assert=assert
 api.setmetatable=setmetatable

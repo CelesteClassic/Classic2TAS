@@ -1,24 +1,5 @@
 local TAS={}
 
---[[local function draw_time(x,y)
-	if pico8.cart.time_ticking or (pico8.cart.level_index()<30 and pico8.cart.time_ticking==nil) then 
-		pico8.cart.centiseconds=math.floor(100*pico8.cart.frames/30)
-	end
-	if TAS.showdebug and TAS.final_reproduce then
-		local cs=pico8.cart.centiseconds
-		local s=pico8.cart.seconds
-		local m=pico8.cart.minutes
-		--local h=math.floor(pico8.cart.minutes/60)
-
-		pico8.cart.rectfill(x,y,x+32,y+6,0)
-		pico8.cart.print((m<10 and "0"..m or m)..":"..(s<10 and "0"..s or s).."."..(cs<10 and "0"..cs or cs),x+1,y+1,7)
-	end
-end]]--
-
--- this is a comment
-local function empty() 
-end
-
 local function clone(org,dst,seen)
 	for i,o in pairs(org) do
 		if type(o)=="table" and i~="type" then 
@@ -145,8 +126,8 @@ local function update()
 			end
 		end
 		
-		if not TAS.keypresses[TAS.frame+1] then
-			TAS.keypresses[TAS.frame+1]={}
+		if not TAS.keypresses[TAS.frame] then
+			TAS.keypresses[TAS.frame]={}
 		end
 	end 
 	if TAS.reproduce then
@@ -374,7 +355,8 @@ local function restart()
 	TAS.frames=0
 	TAS.advance_frame=false
 	TAS.keypresses={}
-	TAS.keypresses[1]={}
+	TAS.keypresses[0]={}
+	TAS.active=false
 	TAS.states={}
 	TAS.states_flags={}
 	TAS.current_frame=0
