@@ -44,7 +44,6 @@ function _init()
 end
 
 function _update()
-
 	-- titlescreen
 	if level_index == 0 then
 		if titlescreen_flash then

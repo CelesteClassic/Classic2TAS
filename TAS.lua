@@ -1,33 +1,39 @@
 local TAS={}
 
-local function clone(org,dst,seen)
-	for i,o in pairs(org) do
-		if type(o)=="table" and i~="type" then 
-			dst[i]={}
-			clone(o,dst[i],seen)
-		elseif type(o)~="function" then
-			dst[i]=o  
+function deepcopy(orig, copies)
+	copies = copies or {}
+	local orig_type = type(orig)
+	local copy
+	if orig_type == 'table' then
+		if copies[orig] then
+			copy = copies[orig]
+		else
+			copy = {}
+			copies[orig] = copy
+			for orig_key, orig_value in next, orig, nil do
+				copy[deepcopy(orig_key, copies)] = deepcopy(orig_value, copies)
+			end
+			setmetatable(copy, getmetatable(orig))
 		end
+	else -- number, string, boolean, etc
+		copy = orig
 	end
+	return copy
 end
-local function clone_function(fn)
-  local dumped = string.dump(fn)
-  local cloned = loadstring(dumped)
-  local i = 1
-  while true do
-    local name = debug.getupvalue(fn, i)
-    if not name then
-      break
-    end
-    debug.upvaluejoin(cloned, i, fn, i)
-    i = i + 1
-  end
-  setfenv(cloned,getfenv(fn))
-  return cloned
-end
+local globals={"level_index","level_intro","freeze_time","camera_x","camera_y","collected","show_score","infade","input_x","input_jump_pressed","input_grapple_pressed","axis_x_value","axis_x_turned","input_jump","input_grapple"}
 local function get_state()
-	local state={}
+	local copies={}
+	for _,o in pairs(pico8.cart.objects) do 
+		copies[o.base]=o.base 
+	end 
+	local state=deepcopy(pico8.cart.objects,copies)
 	local state_flag={}
+	for _, o in pairs(globals) do 
+		state_flag[o]=deepcopy(pico8.cart[o])
+	end 
+	state_flag.pico_cam_x=pico8.camera_x
+	state_flag.pico_cam_y=pico8.camera_y
+	
 	--[[
 	state_flag.state_practice_time=TAS.practice_time
 	state_flag.got_fruit=pico8.cart.got_fruit[pico8.cart.level_index+1]
@@ -59,8 +65,19 @@ local function get_state()
 end
 TAS.get_state=get_state
 
+function TAS.store_state() 
+	local state, state_flag=get_state()
+	TAS.states[TAS.frame]=state
+	TAS.states_flags[TAS.frame]=state_flag
+end 
 local function set_state(state, state_flag)
-	pico8.cart.got_fruit[pico8.cart.level_index()+1]=state_flag.got_fruit
+	pico8.cart.objects=state
+	for _, o in pairs(globals) do 
+		pico8.cart[o]=deepcopy(state_flag[o])
+	end 
+	pico8.camera_x=state_flag.pico_cam_x
+	pico8.camera_y=state_flag.pico_cam_y
+	--[[pico8.cart.got_fruit[pico8.cart.level_index()+1]=state_flag.got_fruit
 	pico8.cart.has_dashed=state_flag.has_dashed
 	pico8.cart.frames=state_flag.frames
 	pico8.cart.seconds=state_flag.seconds
@@ -80,7 +97,7 @@ local function set_state(state, state_flag)
 		local e = pico8.cart.init_object(o.type,o.x,o.y)
 		clone(o,e)
 	end
-	TAS.start=state_flag.start
+	TAS.start=state_flag.start]]--
 end
 TAS.set_state=set_state
 
@@ -89,19 +106,19 @@ local function update()
 	if TAS.advance_frame then
 		TAS.advance_frame=false
 
-		local seen_player=false
+		local player_alive=false
 		for _,o in pairs(pico8.cart.objects) do
-			if o.base==pico8.cart.player then 
-				seen_player=true
+			if o.base==pico8.cart.player and o.state~=99 then 
+				player_alive=true
 			end
 		end
-		if seen_player and not TAS.active then 
+		if player_alive and pico8.cart.level_intro<=1 and not TAS.active then 
 			TAS.active=true
 			TAS.frame=0
-		elseif not seen_player then 
+		elseif not TAS.active then 
 			TAS.active=false 
 		end 
-		
+		--TAS.active=true
 		if TAS.active then 
 			TAS.frame=TAS.frame+1
 		end 
@@ -111,7 +128,7 @@ local function update()
 					TAS.save_reproduce=false
 					TAS.reproduce=false
 				end 
-				TAS.save_file(true,TAS.frame)
+				TAS.save_file(true,TAS.frame-1)
 				log("Saved cleaned file to "..love.filesystem.getRealDirectory(""))
 			end 
 
@@ -127,7 +144,7 @@ local function update()
 		end
 		
 		if not TAS.keypresses[TAS.frame] then
-			TAS.keypresses[TAS.frame]={}
+			TAS.keypresses[TAS.frame]=deepcopy(TAS.keypresses[TAS.frame-1])
 		end
 	end 
 	if TAS.reproduce then
@@ -225,7 +242,18 @@ function load_level(idx)
 	if not TAS.final_reproduce then 
 		pico8.collected={}
 		pico8.cart.goto_level(idx)
+		pico8.cart.level_intro=0
+		pico8.cart.infade=15
+		--reset input state
+		pico8.cart.input_x = 0
+		pico8.cart.input_jump = false
+		pico8.cart.input_jump_pressed = 0
+		pico8.cart.input_grapple = false
+		pico8.cart.input_grapple_pressed = 0
+		pico8.cart.axis_x_value = 0
+		pico8.cart.axis_x_turned = false
 	end 
+	TAS.active=pico8.cart.level_intro<=1
 end
 
 local function load_file(file)
@@ -233,7 +261,7 @@ local function load_file(file)
 	local data=file:read()
 	if data~=nil then
 		local iterator=0
-		for s in x:gmatch("([^,]+)") do
+		for s in data:gmatch("([^,]+)") do
 			TAS.keypresses[iterator]={}
 			local c=tonumber(s)
 			for i=0,5 do
@@ -288,9 +316,6 @@ local function keypress(key)
 			load_level(pico8.cart.level_index)
 		elseif key=='l' then
 			TAS.advance_frame=true
-			local state, state_flag=get_state()
-			TAS.states[TAS.frame]=state
-			TAS.states_flags[TAS.frame]=state_flag
 		elseif key=='k' then
 			if TAS.frame>0 then
 				TAS.frame=TAS.frame-1
@@ -344,6 +369,9 @@ local function init()
 	local _draw=pico8.cart._draw
 	pico8.cart._draw=function() 
 		_draw()
+		if pico8.cart.shake > 0 then
+			pico8.cart.shake=pico8.cart.shake-1
+		end 
 		if pico8.cart.level_index<8 then
 			pico8.cart.draw_time(1,1,7)
 		end

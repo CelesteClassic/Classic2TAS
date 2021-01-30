@@ -426,6 +426,7 @@ function love.update(dt)
 	pico8.frames=pico8.frames+1
 	update_buttons()
 	if TAS.advance_frame then
+		TAS.store_state()
 		if pico8.cart._update60 then
 			pico8.cart._update60()
 		elseif pico8.cart._update then
