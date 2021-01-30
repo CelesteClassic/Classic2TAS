@@ -1,7 +1,7 @@
 # Instructions to run 
 download LOVE from https://www.love2d.org/
-from the parent directory of the project, run 
-``` <path to your love executable> CelesteTAS <cartname>.p8``` 
+from the directory of the project, run 
+``` <path to your love executable> .``` 
 where cartname is the name of the cart you want to TAS which should be in the carts folder
 
 # Usage
