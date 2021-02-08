@@ -19,6 +19,8 @@ To see the TAS in real time press P, which will start reproducing the inputs fro
 
 To go back to the first frame press D, which will restart the game but still keep your inputs.
 
+To clear all of your inputs from the next frame onwards press T.
+
 To reload the level and delete your inputs press R.
 
 To hide/unhide the timer and input viewer press E.

@@ -314,6 +314,10 @@ local function keypress(key)
 			TAS.reproduce=false
 			TAS.save_reproduce=false
 			load_level(pico8.cart.level_index)
+		elseif key=='t' then 
+			for i=TAS.frame+1,#TAS.keypresses do 
+				TAS.keypresses[i]=nil 
+			end 
 		elseif key=='l' then
 			TAS.advance_frame=true
 		elseif key=='k' then
@@ -380,7 +384,7 @@ local function init()
 end
 TAS.init=init
 local function restart()
-	TAS.frames=0
+	TAS.frame=0
 	TAS.advance_frame=false
 	TAS.keypresses={}
 	TAS.keypresses[0]={}
