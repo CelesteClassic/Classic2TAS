@@ -174,8 +174,9 @@ local function draw()
 			pico8.cart.rectfill(inputs_x + 2, 7, inputs_x + 4, 9, TAS.keypresses[TAS.frame][4] and 7 or 1) -- z
 			pico8.cart.rectfill(inputs_x + 6, 7, inputs_x + 8, 9, TAS.keypresses[TAS.frame][5] and 7 or 1) -- x
 		end
+		love.graphics.pop()
 	end
-	love.graphics.pop()
+	
 end
 TAS.draw=draw
 
