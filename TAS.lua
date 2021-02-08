@@ -20,7 +20,7 @@ function deepcopy(orig, copies)
 	end
 	return copy
 end
-local globals={"level_index","level_intro","freeze_time","camera_x","camera_y","collected","show_score","infade","input_x","input_jump_pressed","input_grapple_pressed","axis_x_value","axis_x_turned","input_jump","input_grapple"}
+local globals={"level_index","level_intro","freeze_time","camera_x","camera_y","collected","show_score","infade","input_x","input_jump_pressed","input_grapple_pressed","axis_x_value","axis_x_turned","input_jump","input_grapple","level_checkpoint"}
 local function get_state()
 	local copies={}
 	for _,o in pairs(pico8.cart.objects) do 
@@ -229,7 +229,7 @@ local function clear_state()
 	TAS.keypresses={}
 	TAS.keypresses[0]={}
 	TAS.frame=0
-	TAS.prev_state={level_index=-1,deaths=pico8.cart.deaths}
+	TAS.prev_state={level_index=-1}
 	TAS.active=false
 	TAS.save_reproduce=false
 	TAS.reproduce=false
