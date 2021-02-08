@@ -952,7 +952,7 @@ function snowball.on_collide_y(self, moved, total)
 	if self.speed_y >= 4 then
 		self.speed_y = -2
 		psfx(17, 0, 2)
-	elseif self.speed_y >= 1 then
+	elseif self.speed_y > 1 then
 		self.speed_y = -1
 		psfx(17, 0, 2)
 	else
