@@ -1,8 +1,8 @@
 # Instructions to run 
 download LOVE from https://www.love2d.org/
-from the parent directory of the project, run 
-``` <path to your love executable> CelesteTAS <cartname>.p8``` 
-where cartname is the name of the cart you want to TAS which should be in the carts folder
+in the directory of the project, run 
+``` <path to your love executable> . <cartname>``` 
+where cartname is the name of the cart you want to TAS which should be in the carts folder. if cartname is omitted, celeste2_1.1.p8 will be loaded
 
 # Usage
 First of all, you will see a timer in the top-left corner, which tracks the time, and a black rectangle right next to it, the black rectangle is an input viewer, where you can see what keys are being pressed on that frame. The input viewer will be blacked out because you can't input anything yet, as you are in the spawning state, once the spawning state is over (around 26 frames after loading the level, depends on the level) you will be able to see the keys.

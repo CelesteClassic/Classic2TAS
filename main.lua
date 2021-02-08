@@ -121,13 +121,12 @@ local exts={"", ".p8", ".p8.png", ".png"}
 function _load(filename)
 	filename=filename or cartname
 	for i=1, #exts do
-		if love.filesystem.getInfo(filename..exts[i]) ~= nil then
+		if love.filesystem.getInfo("carts/"..filename..exts[i]) ~= nil then
 			filename=filename..exts[i]
 			break
 		end
 	end
 	cartname=filename
-
 	pico8.camera_x=0
 	pico8.camera_y=0
 	love.graphics.origin()
@@ -139,7 +138,7 @@ function _load(filename)
 	love.graphics.setCanvas(pico8.screen)
 	love.graphics.setShader(pico8.draw_shader)
 
-	pico8.cart=cart.load_p8(filename,DEBUG)
+	pico8.cart=cart.load_p8("carts/"..filename,DEBUG)
 	for i=0, 0x1c00-1 do
 		pico8.usermemory[i]=0
 	end
@@ -353,7 +352,8 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) 
 		end 
 	end
 	-- load the cart
-	_load('celeste2.p8')
+	love.filesystem.createDirectory("gifs")
+	_load(love_args[1]~=nil and love_args[1] or 'celeste2_1.1.p8')
 end
 
 local function inside(x, y, x0, y0, w, h)
@@ -671,14 +671,14 @@ function love.keypressed(key)
 		paused=not paused
 	elseif key=='f1' or key=='f6' then
 		-- screenshot
-		local filename=cartname..'-'..os.time()..'.png'
+		local filename="gifs/"..cartname..'-'..os.time()..'.png'
 		love.graphics.captureScreenshot(filename)
 		log('saved screenshot to', filename)
 	elseif key=='f3' or key=='f8' or (key=='8' and isCtrlOrGuiDown) then
 		-- start recording
 		if gif_recording==nil then
 			local err
-			gif_recording, err=gif.new(cartname..'-'..os.time()..'.gif')
+			gif_recording, err=gif.new("gifs/"..cartname..'-'..os.time()..'.gif')
 			if not gif_recording then
 				log('failed to start recording: '..err)
 			else

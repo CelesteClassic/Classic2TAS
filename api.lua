@@ -870,10 +870,12 @@ function api.min(a, b)
 end
 
 function api.max(a, b)
-	if a==nil or b==nil then
+	--[[if a==nil or b==nil then
 		warning('max a or b are nil returning 0')
 		return 0
-	end
+	end]]
+	a=a or 0
+	b=b or 0
 	if a>b then return a end
 	return b
 end
