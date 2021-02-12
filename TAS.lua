@@ -33,34 +33,6 @@ local function get_state()
 	end 
 	state_flag.pico_cam_x=pico8.camera_x
 	state_flag.pico_cam_y=pico8.camera_y
-	
-	--[[
-	state_flag.state_practice_time=TAS.practice_time
-	state_flag.got_fruit=pico8.cart.got_fruit[pico8.cart.level_index+1]
-	state_flag.has_dashed=pico8.cart.has_dashed
-	state_flag.frames=pico8.cart.frames
-	state_flag.seconds=pico8.cart.seconds
-	state_flag.minutes=pico8.cart.minutes
-	state_flag.has_key=pico8.cart.has_key
-	state_flag.new_bg=pico8.cart.new_bg
-	state_flag.flash_bg=pico8.cart.flash_bg
-	state_flag.pause_player=pico8.cart.pause_player
-	state_flag.max_djump=pico8.cart.max_djump
-	state_flag.practice_timing=TAS.practice_timing
-	state_flag.will_restart=pico8.cart.will_restart
-	state_flag.delay_restart=pico8.cart.delay_restart
-	state_flag.start=TAS.start
-	state_flag.practice_timing=TAS.practice_timing
-	state_flag.show_keys=TAS.show_keys
-	state_flag.freeze=pico8.cart.freeze
-	local objects=pico8.cart.objects
-	for i,o in pairs(objects) do
-		local s={}
-		clone(o,s)
-		table.insert(state,s)
-			
-	end
-	]]
 	return state, state_flag
 end
 TAS.get_state=get_state
@@ -77,27 +49,6 @@ local function set_state(state, state_flag)
 	end 
 	pico8.camera_x=state_flag.pico_cam_x
 	pico8.camera_y=state_flag.pico_cam_y
-	--[[pico8.cart.got_fruit[pico8.cart.level_index()+1]=state_flag.got_fruit
-	pico8.cart.has_dashed=state_flag.has_dashed
-	pico8.cart.frames=state_flag.frames
-	pico8.cart.seconds=state_flag.seconds
-	pico8.cart.minutes=state_flag.minutes
-	pico8.cart.has_key=state_flag.has_key
-	pico8.cart.new_bg=state_flag.new_bg
-	pico8.cart.flash_bg=state_flag.flash_bg
-	pico8.cart.pause_player=state_flag.pause_player
-	pico8.cart.max_djump=state_flag.max_djump
-	pico8.cart.will_restart=state_flag.will_restart
-	pico8.cart.delay_restart=state_flag.delay_restart
-	TAS.practice_timing=state_flag.practice_timing
-	TAS.show_keys=state_flag.show_keys
-	pico8.cart.freeze=state_flag.freeze
-	pico8.cart.objects={}
-	for i,o in pairs(state) do
-		local e = pico8.cart.init_object(o.type,o.x,o.y)
-		clone(o,e)
-	end
-	TAS.start=state_flag.start]]--
 end
 TAS.set_state=set_state
 
@@ -112,7 +63,7 @@ local function update()
 				player_alive=true
 			end
 		end
-		if player_alive and pico8.cart.level_intro<=1 and not TAS.active then 
+		if player_alive and pico8.cart.level_intro==0 and not TAS.active then 
 			TAS.active=true
 			TAS.frame=0
 		elseif not TAS.active then 
@@ -139,7 +90,7 @@ local function update()
 				local numFrames=TAS.frame
 				TAS.load_file(love.filesystem.newFile(("TAS/TAS%d.tas"):format(pico8.cart.level_index)))
 				TAS.reproduce=true
-				log(("%02d:%02d:%02d (%d)"):format(pico8.cart.minutes,pico8.cart.seconds,round(100*pico8.cart.frames/30)),TAS.frame)
+				log(("%02d:%02d.%02d (%d)"):format(pico8.cart.minutes,pico8.cart.seconds,math.floor(100*pico8.cart.frames/30+0.5),numFrames))
 			end
 		end
 		
