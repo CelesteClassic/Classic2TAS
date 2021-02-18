@@ -63,6 +63,9 @@ local function update()
 				player_alive=true
 			end
 		end
+		if TAS.active then 
+			TAS.frame=TAS.frame+1
+		end 
 		if player_alive and pico8.cart.level_intro==0 and not TAS.active then 
 			TAS.active=true
 			TAS.frame=0
@@ -70,9 +73,7 @@ local function update()
 			TAS.active=false 
 		end 
 		--TAS.active=true
-		if TAS.active then 
-			TAS.frame=TAS.frame+1
-		end 
+		
 		if TAS.prev_state.level_index~=-1 and TAS.prev_state.level_index~=pico8.cart.level_index then
 			if TAS.save_reproduce then 
 				if not TAS.final_reproduce then 
