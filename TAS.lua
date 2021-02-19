@@ -278,6 +278,18 @@ local function keypress(key)
 				TAS.frame=TAS.frame-1
 				set_state(TAS.states[TAS.frame], TAS.states_flags[TAS.frame])
 			end
+		elseif key=='backspace' then 
+			for i=TAS.frame,#TAS.keypresses do 
+				TAS.keypresses[i]=TAS.keypresses[i+1]
+			end 
+			if not TAS.keypresses[TAS.frame] then
+				TAS.keypresses[TAS.frame]={}
+			end
+		elseif key=="=" then 
+			for i=#TAS.keypresses,TAS.frame,-1 do 
+				TAS.keypresses[i+1]=TAS.keypresses[i]
+			end 
+			TAS.keypresses[TAS.frame]={}
 		elseif key=='up' then
 			TAS.keypresses[TAS.frame][2]=not TAS.keypresses[TAS.frame][2]
 		elseif key=='down' then
