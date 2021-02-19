@@ -88,7 +88,7 @@ local function update()
 				TAS.active=false
 				load_level(TAS.prev_state.level_index)
 			else
-				local numFrames=TAS.frame
+				local numFrames=TAS.frame-1
 				TAS.load_file(love.filesystem.newFile(("TAS/TAS%d.tas"):format(pico8.cart.level_index)))
 				TAS.reproduce=true
 				log(("%02d:%02d.%02d (%d)"):format(pico8.cart.minutes,pico8.cart.seconds,math.floor(100*pico8.cart.frames/30+0.5),numFrames))
@@ -114,9 +114,9 @@ local function draw()
 		--pico8.cart.camera(0,0)
 		love.graphics.push()
 		love.graphics.origin()
-		pico8.cart.rectfill(1,1,13,7,0)
+		pico8.cart.rectfill(1,1,17,7,0)
 		pico8.cart.print(tostring(TAS.frame),2,2,7)
-		local inputs_x=15
+		local inputs_x=19
 		pico8.cart.rectfill(inputs_x,1,inputs_x+24,11,0)
 		if TAS.active then
 			pico8.cart.rectfill(inputs_x + 12, 7, inputs_x + 14, 9, TAS.keypresses[TAS.frame][0] and 7 or 1) -- l
@@ -316,10 +316,8 @@ local function init()
 		local draw_time=pico8.cart.draw_time
 		pico8.cart.draw_time=function(...)
 			local arg={...}
-			if TAS.final_reproduce or pico8.cart.level_index==8 then 
-				if arg[1]~=4 or arg[2]~=4 then --?
-					draw_time(...)
-				end
+			if TAS.final_reproduce then 
+				draw_time(...)
 			end 
 		end
 	end
@@ -329,9 +327,9 @@ local function init()
 		if pico8.cart.shake > 0 then
 			pico8.cart.shake=pico8.cart.shake-1
 		end 
-		if pico8.cart.level_index<8 then
-			pico8.cart.draw_time(1,1,7)
-		end
+		--[[if pico8.cart.level_index<8 then
+			pico8.cart.draw_time(1,1)
+		end]]
 	end
 	load_level(1)
 end
