@@ -254,6 +254,7 @@ local function keypress(key)
 				log("position: "..tostring(o.x)..", "..tostring(o.y))
 				log("rem values: "..tostring(o.remainder_x)..", "..tostring(o.remainder_y))
 				log("speed: "..tostring(o.speed_x)..", "..tostring(o.speed_y))
+				log("camera: "..tostring(pico8.cart.camera_x)..", "..tostring(pico8.cart.camera_y))
 			end
 		end
 	end 
