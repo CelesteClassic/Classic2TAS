@@ -88,7 +88,7 @@ local function update()
 				TAS.active=false
 				load_level(TAS.prev_state.level_index)
 			else
-				local numFrames=TAS.frame-1
+				local numFrames=TAS.frame
 				TAS.load_file(love.filesystem.newFile(("TAS/TAS%d.tas"):format(pico8.cart.level_index)))
 				TAS.reproduce=true
 				log(("%02d:%02d.%02d (%d)"):format(pico8.cart.minutes,pico8.cart.seconds,math.floor(100*pico8.cart.frames/30+0.5),numFrames))
